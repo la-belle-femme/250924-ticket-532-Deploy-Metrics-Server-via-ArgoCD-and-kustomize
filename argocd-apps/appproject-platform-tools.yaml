@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: platform-tools
+  namespace: argocd
+spec:
+  description: Project for platform engineering tools including metrics-server
+  sourceRepos:
+  - 'https://github.com/la-belle-femme/250924-ticket-532-Deploy-Metrics-Server-via-ArgoCD-and-kustomize'
+  - 'https://kubernetes-sigs.github.io/metrics-server/'
+  destinations:
+  - namespace: 'kube-system'
+    server: https://kubernetes.default.svc
+  - namespace: 'argocd'
+    server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'

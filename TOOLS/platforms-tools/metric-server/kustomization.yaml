@@ -1,21 +1,32 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+
+# Stamp all namespaced resources into kube-system
 namespace: kube-system
+
 helmCharts:
-- name: metrics-server
-  repo: https://kubernetes-sigs.github.io/metrics-server/
-  version: 3.12.1
-  releaseName: metrics-server
-  namespace: kube-system
-  valuesInline:
-    args:
-    - --kubelet-insecure-tls
-    - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
-    resources:
-      limits:
-        cpu: 200m
-        memory: 256Mi
-      requests:
-        cpu: 50m
-        memory: 64Mi
-    replicas: 1
+  - name: metrics-server
+    repo: https://kubernetes-sigs.github.io/metrics-server/
+    version: 3.12.1              # chart version
+    releaseName: metrics-server
+    namespace: kube-system
+    valuesInline:
+      # KIND/local-friendly flags
+      args:
+        - --kubelet-insecure-tls
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+
+      # Pin the container image version (This is optional but reproducible)
+      image:
+        repository: registry.k8s.io/metrics-server/metrics-server
+        tag: v0.7.2
+
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
+
+      replicas: 1
