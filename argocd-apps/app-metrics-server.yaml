@@ -9,9 +9,30 @@ spec:
     server: https://kubernetes.default.svc
     namespace: kube-system
   source:
-    repoURL: 'https://github.com/la-belle-femme/250924-ticket-532-Deploy-Metrics-Server-via-ArgoCD-and-kustomize'
-    path: 'TOOLS/platforms-tools/metric-server'
-    targetRevision: HEAD
+    repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    chart: metrics-server
+    targetRevision: 3.12.1
+    helm:
+      values: |
+        # KIND/local-friendly flags
+        args:
+          - --kubelet-insecure-tls
+          - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        
+        # Pin the container image version
+        image:
+          repository: registry.k8s.io/metrics-server/metrics-server
+          tag: v0.7.2
+        
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        
+        replicas: 1
   syncPolicy:
     automated:
       prune: true
